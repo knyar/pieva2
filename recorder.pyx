@@ -41,10 +41,10 @@ class Recorder(object):
     def end(self):
         self.killRecording=True
 
-    def piff(self, val, chunk_size, sample_rate):
+    def piff(self, float val, int chunk_size, int sample_rate):
         return int(chunk_size * val / sample_rate)
 
-    def calculate_levels(self, frequency_limits, outbars):
+    def calculate_levels(self, frequency_limits, int outbars):
         data = self.audio
 
         # if you take an FFT of a chunk of audio, the edges will look like
@@ -114,7 +114,7 @@ class AlsaRecorder(Recorder):
         if l:
             self.audio = numpy.fromstring(data, dtype=numpy.int16)
 
-    def normalize(self, value, sensitivity):
+    def normalize(self, float value, float sensitivity):
         return (value - 2) / float(sensitivity * 5)
 
 
@@ -138,7 +138,7 @@ class PyAudioRecorder(Recorder):
         except IOError as e:
             print "PyAudioRecorder getAudio() IOError: %s" % e
 
-    def normalize(self, value, sensitivity):
+    def normalize(self, float value, float sensitivity):
         return (value - 10.2) / float(sensitivity)
 
 

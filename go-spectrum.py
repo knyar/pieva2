@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import yappi
 import argparse
+import pyximport; pyximport.install()
 
 from bibliopixel import LEDMatrix
 from bibliopixel.led import *
@@ -8,6 +10,7 @@ from recorder import AlsaRecorder, PyAudioRecorder, EQ, BassPulse
 from pbdriver import DriverPieva, DriverPievaX4, DriverPievaX4Rev
 
 if __name__ == '__main__':
+#    yappi.start()
     parser = argparse.ArgumentParser(description='Spectrum analyzer')
     parser.add_argument('--recorder', choices=['pyaudio', 'alsa'], default='alsa')
     parser.add_argument('--display', choices=['full', 'x4', 'x4rev'], default='x4')
@@ -55,3 +58,4 @@ if __name__ == '__main__':
     anim.endRecord()
     led.all_off()
     led.update()
+#    yappi.get_func_stats().print_all()

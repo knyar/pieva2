@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import numpy
+cimport numpy
 import pyaudio
 import alsaaudio
 import threading
@@ -44,6 +45,12 @@ class Recorder(object):
     def piff(self, float val, int chunk_size, int sample_rate):
         return int(chunk_size * val / sample_rate)
 
+    def fastsum(self, numpy.ndarray[double] l):
+        cdef double v
+        for i in l:
+            v += i
+        return v
+
     def calculate_levels(self, frequency_limits, int outbars):
         data = self.audio
 
@@ -60,13 +67,13 @@ class Recorder(object):
         fourier = numpy.delete(fourier, len(fourier) - 1)
 
         # Calculate the power spectrum
-        power = numpy.abs(fourier) ** 2
+        cdef numpy.ndarray[double] power = numpy.abs(fourier) ** 2
 
         matrix = numpy.zeros(outbars)
         for i in range(outbars):
             # take the log10 of the resulting sum to approximate how human ears perceive sound levels
-            matrix[i] = numpy.log10(numpy.sum(power[self.piff(frequency_limits[i][0], self.buffersize, self.RATE)
-                                              :self.piff(frequency_limits[i][1], self.buffersize, self.RATE):1]))
+            matrix[i] = numpy.log10(self.fastsum(power[self.piff(frequency_limits[i][0], self.buffersize, self.RATE)
+                                                       :self.piff(frequency_limits[i][1], self.buffersize, self.RATE):1]))
 
         return matrix
 

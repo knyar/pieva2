@@ -10,8 +10,8 @@ from recorder import AlsaRecorder, PyAudioRecorder, EQ, BassPulse
 from pbdriver import DriverPieva, DriverPievaX4, DriverPievaX4Rev
 
 if __name__ == '__main__':
-#    yappi.start()
     parser = argparse.ArgumentParser(description='Spectrum analyzer')
+    parser.add_argument('--profiling', type=bool, default=False)
     parser.add_argument('--recorder', choices=['pyaudio', 'alsa'], default='alsa')
     parser.add_argument('--display', choices=['full', 'x4', 'x4rev'], default='x4')
     parser.add_argument('--anim', choices=['eq', 'bass', 'test'], default='eq')
@@ -20,6 +20,9 @@ if __name__ == '__main__':
     parser.add_argument('--max_freq', default=15000) # 15000 Hz
     parser.add_argument('--sensitivity', default=3, type=float)  # lower is more sensitive
     args = parser.parse_args()
+
+    if args.profiling:
+        yappi.start()
 
     if args.display == 'full':
         w = 140
@@ -58,4 +61,5 @@ if __name__ == '__main__':
     anim.endRecord()
     led.all_off()
     led.update()
-#    yappi.get_func_stats().print_all()
+    if args.profiling:
+        yappi.get_func_stats().print_all()
